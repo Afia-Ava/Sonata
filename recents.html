@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Recent Moods - Sonata</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cream: #fffdfa;
+            --taupe: #f3f0ec;
+            --beige: #e3d6c8;
+            --brown: #4a3b2e;
+            --merlot: #6d263d;
+            --charcoal: #232323;
+            --black: #181818;
+            --shadow: 0 4px 24px 0 rgba(61, 38, 38, 0.10);
+            --radius: 0;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, var(--cream) 0%, var(--taupe) 100%);
+            color: var(--brown);
+            font-family: 'Outfit', 'Segoe UI', Arial, sans-serif;
+            font-size: 18px;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: row;
+        }
+        .sidebar {
+            width: 230px;
+            background: var(--charcoal);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            padding: 36px 0 28px 0;
+            box-shadow: 2px 0 24px rgba(61,38,38,0.10);
+            min-height: 100vh;
+            z-index: 2;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        .sidebar .sidebar-logo {
+            font-size: 2.2em;
+            font-weight: 900;
+            letter-spacing: 2.5px;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 44px;
+            font-family: 'Outfit', 'Segoe UI', Arial, sans-serif;
+            text-shadow: 0 2px 12px rgba(109,38,61,0.25), 0 1px 0 #000;
+        }
+        .sidebar nav {
+            flex: 1 1 auto;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0 0 0 28px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+        .sidebar ul li {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 1.1em;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 10px;
+            padding: 8px 8px 8px 0;
+            transition: background 0.18s;
+        }
+        .sidebar ul li:hover {
+            background: rgba(255,255,255,0.08);
+        }
+        .sidebar ul li.active {
+            background: rgba(255,255,255,0.15);
+        }
+        .sidebar ul li .icon {
+            width: 20px;
+            height: 20px;
+            background: var(--beige);
+            border-radius: 6px;
+            display: inline-block;
+        }
+        .sidebar .sidebar-footer {
+            margin-top: 36px;
+            text-align: center;
+        }
+        .sidebar .sidebar-footer button {
+            background: var(--merlot);
+            color: #fff;
+            border: none;
+            border-radius: 0;
+            padding: 10px 32px;
+            font-size: 1.08em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            box-shadow: 0 2px 8px rgba(61,38,38,0.06);
+        }
+        .sidebar .sidebar-footer button:hover {
+            background: #fff;
+            color: var(--merlot);
+        }
+        .main-content {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            min-height: 100vh;
+            background: transparent;
+            padding: 0;
+        }
+        .navbar {
+            width: 100%;
+            background: var(--merlot);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2vw;
+            box-sizing: border-box;
+            height: 64px;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+        .navbar .nav-title {
+            font-size: 1.4em;
+            font-weight: 600;
+        }
+        .navbar .back-btn {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .navbar .back-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .content-area {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            padding: 40px 56px 40px 56px;
+            min-width: 0;
+        }
+        .page-header {
+            margin-bottom: 32px;
+        }
+        .page-title {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: var(--brown);
+            margin-bottom: 8px;
+        }
+        .page-subtitle {
+            font-size: 1.1em;
+            color: var(--brown);
+            opacity: 0.7;
+        }
+        .recents-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+        .recents-count {
+            font-size: 1.1em;
+            color: var(--brown);
+            opacity: 0.8;
+        }
+        .clear-all-btn {
+            background: var(--merlot);
+            color: #fff;
+            border: none;
+            border-radius: 0;
+            padding: 10px 24px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .clear-all-btn:hover {
+            background: var(--charcoal);
+            color: #fff;
+        }
+        .recent-moods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .recent-mood-item {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(61,38,38,0.08);
+            gap: 16px;
+            font-size: 1.1em;
+            font-family: inherit;
+            color: var(--charcoal);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .recent-mood-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(61,38,38,0.12);
+        }
+        .recent-mood-item .img-placeholder {
+            width: 48px;
+            height: 48px;
+            background: var(--beige);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--charcoal);
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+        .recent-mood-item .mood-details {
+            flex: 1 1 auto;
+        }
+        .recent-mood-item .mood-name {
+            color: var(--charcoal);
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .recent-mood-item .mood-date {
+            color: var(--brown);
+            font-size: 0.9em;
+            opacity: 0.6;
+        }
+        .recent-mood-item .mood-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--merlot);
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .action-btn:hover {
+            background: var(--beige);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--brown);
+            opacity: 0.6;
+        }
+        .empty-state .icon {
+            font-size: 4em;
+            margin-bottom: 16px;
+        }
+        .empty-state h3 {
+            font-size: 1.3em;
+            margin-bottom: 8px;
+        }
+        .empty-state p {
+            font-size: 1em;
+            margin-bottom: 24px;
+        }
+        .home-btn {
+            background: var(--merlot);
+            color: #fff;
+            border: none;
+            border-radius: 24px;
+            padding: 12px 24px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .home-btn:hover {
+            background: var(--charcoal);
+        }
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .main-content { padding-left: 0; }
+            .content-area { padding: 24px 8vw 24px 8vw; }
+            .recent-moods-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 600px) {
+            .content-area { padding: 16px 2vw 16px 2vw; }
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo">Sonata</div>
+        <nav>
+            <ul>
+                <li onclick="window.location.href='sonata.html'"><span class="icon"></span><span>Explore</span></li>
+                <li><span class="icon"></span><span>Playlists</span></li>
+                <li><span class="icon"></span><span>Favorites</span></li>
+                <li class="active"><span class="icon"></span><span>Recents</span></li>
+                <li><span class="icon"></span><span>User Profile</span></li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <button>Logout</button>
+        </div>
+    </aside>
+    <div class="main-content">
+        <nav class="navbar">
+            <div class="nav-title">Recent Moods</div>
+            <button class="back-btn" onclick="window.location.href='sonata.html'">← Back to Home</button>
+        </nav>
+        <div class="content-area">
+            <div class="page-header">
+                <div class="page-title">Your Recent Moods</div>
+                <div class="page-subtitle">Revisit your musical journey and discover new playlists based on your past searches</div>
+            </div>
+            
+            <div class="recents-actions">
+                <div class="recents-count" id="recentsCount">0 recent moods</div>
+                <button class="clear-all-btn" onclick="clearAllRecentMoods()">Clear All</button>
+            </div>
+            
+            <div class="recent-moods-grid" id="recentMoodsGrid">
+                <!-- Recent moods will be loaded here -->
+            </div>
+            
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="icon">🎵</div>
+                <h3>No Recent Moods</h3>
+                <p>Start exploring music by searching for your mood on the home page</p>
+                <button class="home-btn" onclick="window.location.href='sonata.html'">Explore Music</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Song database categorized by mood themes
+        const songDatabase = {
+            happy: [
+                { title: "Happy", artist: "Pharrell Williams", genre: "Pop" },
+                { title: "Good as Hell", artist: "Lizzo", genre: "Pop" },
+                { title: "Can't Stop the Feeling", artist: "Justin Timberlake", genre: "Pop" },
+                { title: "Walking on Sunshine", artist: "Katrina and the Waves", genre: "Rock" },
+                { title: "Don't Stop Me Now", artist: "Queen", genre: "Rock" },
+                { title: "Celebration", artist: "Kool & The Gang", genre: "Funk" },
+                { title: "I Gotta Feeling", artist: "The Black Eyed Peas", genre: "Pop" },
+                { title: "September", artist: "Earth, Wind & Fire", genre: "Funk" },
+                { title: "Dancing Queen", artist: "ABBA", genre: "Pop" },
+                { title: "Mr. Blue Sky", artist: "Electric Light Orchestra", genre: "Rock" }
+            ],
+            sad: [
+                { title: "Someone Like You", artist: "Adele", genre: "Ballad" },
+                { title: "Mad World", artist: "Gary Jules", genre: "Alternative" },
+                { title: "Hurt", artist: "Johnny Cash", genre: "Country" },
+                { title: "Black", artist: "Pearl Jam", genre: "Grunge" },
+                { title: "Tears in Heaven", artist: "Eric Clapton", genre: "Blues" },
+                { title: "The Sound of Silence", artist: "Simon & Garfunkel", genre: "Folk" },
+                { title: "Everybody Hurts", artist: "R.E.M.", genre: "Alternative Rock" },
+                { title: "Breathe Me", artist: "Sia", genre: "Pop" },
+                { title: "Mad About You", artist: "Sting", genre: "Rock" },
+                { title: "Fix You", artist: "Coldplay", genre: "Alternative Rock" }
+            ],
+            calm: [
+                { title: "Weightless", artist: "Marconi Union", genre: "Ambient" },
+                { title: "Clair de Lune", artist: "Claude Debussy", genre: "Classical" },
+                { title: "The Night We Met", artist: "Lord Huron", genre: "Indie" },
+                { title: "Holocene", artist: "Bon Iver", genre: "Indie Folk" },
+                { title: "River", artist: "Joni Mitchell", genre: "Folk" },
+                { title: "Mad World", artist: "Tears for Fears", genre: "New Wave" },
+                { title: "Aqueous Transmission", artist: "Incubus", genre: "Alternative Rock" },
+                { title: "Porcelain", artist: "Moby", genre: "Electronic" },
+                { title: "Gymnopédie No. 1", artist: "Erik Satie", genre: "Classical" },
+                { title: "Teardrop", artist: "Massive Attack", genre: "Trip Hop" }
+            ],
+            energetic: [
+                { title: "Pump It", artist: "Black Eyed Peas", genre: "Hip Hop" },
+                { title: "Thunder", artist: "Imagine Dragons", genre: "Rock" },
+                { title: "Uptown Funk", artist: "Mark Ronson ft. Bruno Mars", genre: "Funk" },
+                { title: "Can't Hold Us", artist: "Macklemore & Ryan Lewis", genre: "Hip Hop" },
+                { title: "Eye of the Tiger", artist: "Survivor", genre: "Rock" },
+                { title: "Stronger", artist: "Kanye West", genre: "Hip Hop" },
+                { title: "Titanium", artist: "David Guetta ft. Sia", genre: "Electronic" },
+                { title: "We Will Rock You", artist: "Queen", genre: "Rock" },
+                { title: "Levels", artist: "Avicii", genre: "Electronic" },
+                { title: "Bangarang", artist: "Skrillex", genre: "Dubstep" }
+            ],
+            romantic: [
+                { title: "Perfect", artist: "Ed Sheeran", genre: "Pop" },
+                { title: "All of Me", artist: "John Legend", genre: "R&B" },
+                { title: "Thinking Out Loud", artist: "Ed Sheeran", genre: "Pop" },
+                { title: "Make You Feel My Love", artist: "Adele", genre: "Ballad" },
+                { title: "At Last", artist: "Etta James", genre: "Soul" },
+                { title: "Can't Help Myself", artist: "The Four Tops", genre: "Motown" },
+                { title: "La Vie En Rose", artist: "Édith Piaf", genre: "French Chanson" },
+                { title: "Unchained Melody", artist: "The Righteous Brothers", genre: "Soul" },
+                { title: "Stand by Me", artist: "Ben E. King", genre: "Soul" },
+                { title: "Something", artist: "The Beatles", genre: "Rock" }
+            ],
+            relaxed: [
+                { title: "Banana Pancakes", artist: "Jack Johnson", genre: "Acoustic" },
+                { title: "Better Days", artist: "OneRepublic", genre: "Pop" },
+                { title: "Three Little Birds", artist: "Bob Marley", genre: "Reggae" },
+                { title: "Sunset Lover", artist: "Petit Biscuit", genre: "Electronic" },
+                { title: "Stay", artist: "Rihanna", genre: "Pop" },
+                { title: "No Woman No Cry", artist: "Bob Marley", genre: "Reggae" },
+                { title: "The Girl from Ipanema", artist: "Stan Getz & João Gilberto", genre: "Bossa Nova" },
+                { title: "Feeling Good", artist: "Nina Simone", genre: "Jazz" },
+                { title: "Come Away With Me", artist: "Norah Jones", genre: "Jazz" },
+                { title: "Isn't She Lovely", artist: "Stevie Wonder", genre: "Soul" }
+            ]
+        };
+
+        // Recent moods management
+        let recentMoods = JSON.parse(localStorage.getItem('recentMoods') || '[]');
+        
+        function loadRecentMoods() {
+            const grid = document.getElementById('recentMoodsGrid');
+            const emptyState = document.getElementById('emptyState');
+            const recentsCount = document.getElementById('recentsCount');
+            
+            grid.innerHTML = '';
+            
+            if (recentMoods.length === 0) {
+                emptyState.style.display = 'block';
+                recentsCount.textContent = '0 recent moods';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            recentsCount.textContent = `${recentMoods.length} recent mood${recentMoods.length !== 1 ? 's' : ''}`;
+            
+            recentMoods.forEach((mood, index) => {
+                const moodCard = document.createElement('div');
+                moodCard.className = 'recent-mood-item';
+                moodCard.innerHTML = `
+                    <div class="img-placeholder">${getRandomEmoji()}</div>
+                    <div class="mood-details">
+                        <div class="mood-name">${mood.name}</div>
+                        <div class="mood-date">${formatDate(mood.date)}</div>
+                    </div>
+                    <div class="mood-actions">
+                        <button class="action-btn" onclick="searchMoodAgain('${mood.name}')" title="Search again">🔄</button>
+                        <button class="action-btn" onclick="removeMood(${index})" title="Remove">&times;</button>
+                    </div>
+                `;
+                grid.appendChild(moodCard);
+            });
+        }
+        
+        function getRandomEmoji() {
+            const emojis = ['🎵', '🎶', '🎤', '🎧', '🎸', '🎹', '🥁', '🎺', '🎷', '🎻', '😊', '😌', '😍', '🤗', '😎'];
+            return emojis[Math.floor(Math.random() * emojis.length)];
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 1) return 'Today';
+            if (diffDays === 2) return 'Yesterday';
+            if (diffDays <= 7) return `${diffDays - 1} days ago`;
+            
+            return date.toLocaleDateString();
+        }
+        
+        function getMoodCategory(moodName) {
+            const mood = moodName.toLowerCase();
+            
+            if (mood.includes('happy') || mood.includes('joy') || mood.includes('cheerful') || mood.includes('upbeat') || mood.includes('excited') || mood.includes('joyful')) {
+                return 'happy';
+            } else if (mood.includes('sad') || mood.includes('depressed') || mood.includes('melancholy') || mood.includes('blue') || mood.includes('down') || mood.includes('lonely')) {
+                return 'sad';
+            } else if (mood.includes('calm') || mood.includes('peaceful') || mood.includes('serene') || mood.includes('tranquil') || mood.includes('meditative') || mood.includes('zen')) {
+                return 'calm';
+            } else if (mood.includes('energetic') || mood.includes('pumped') || mood.includes('hyped') || mood.includes('intense') || mood.includes('powerful') || mood.includes('motivated')) {
+                return 'energetic';
+            } else if (mood.includes('romantic') || mood.includes('love') || mood.includes('intimate') || mood.includes('tender') || mood.includes('passion') || mood.includes('loving')) {
+                return 'romantic';
+            } else if (mood.includes('relaxed') || mood.includes('chill') || mood.includes('laid back') || mood.includes('mellow') || mood.includes('easygoing') || mood.includes('casual')) {
+                return 'relaxed';
+            }
+            
+            // Default to happy if no specific category found
+            return 'happy';
+        }
+
+        function searchMoodAgain(mood) {
+            const category = getMoodCategory(mood);
+            const songs = songDatabase[category] || songDatabase.happy;
+            
+            // Show comprehensive search results
+            showSearchResults(mood, songs, category);
+        }
+
+        function showSearchResults(mood, songs, category) {
+            // Remove existing modal if any
+            const existingModal = document.getElementById('searchResultsModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+
+            // Create modal
+            const modal = document.createElement('div');
+            modal.id = 'searchResultsModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+                animation: fadeIn 0.3s ease;
+            `;
+
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: white;
+                border-radius: 12px;
+                padding: 32px;
+                max-width: 700px;
+                width: 90%;
+                max-height: 85vh;
+                overflow-y: auto;
+                position: relative;
+                animation: slideIn 0.3s ease;
+            `;
+
+            modalContent.innerHTML = `
+                <style>
+                    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+                    @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+                </style>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 2px solid var(--beige); padding-bottom: 16px;">
+                    <div>
+                        <h2 style="margin: 0; color: var(--charcoal); font-size: 1.5em;">Songs for "${mood}" mood</h2>
+                        <p style="margin: 4px 0 0 0; color: var(--brown); opacity: 0.7; text-transform: capitalize;">Category: ${category} • ${songs.length} songs found</p>
+                    </div>
+                    <button onclick="closeSearchResults()" style="background: none; border: none; font-size: 1.5em; cursor: pointer; color: var(--merlot); padding: 8px; border-radius: 50%; transition: background 0.2s;" onmouseover="this.style.background='var(--beige)'" onmouseout="this.style.background='none'">&times;</button>
+                </div>
+                <div id="songsList" style="max-height: 400px; overflow-y: auto;">
+                    ${songs.map((song, index) => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid var(--beige); ${index === songs.length - 1 ? 'border-bottom: none;' : ''} transition: background 0.2s; border-radius: 8px;" onmouseover="this.style.background='var(--taupe)'" onmouseout="this.style.background='white'">
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; color: var(--charcoal); margin-bottom: 4px; font-size: 1.1em;">${song.title}</div>
+                                <div style="color: var(--brown); opacity: 0.7; font-size: 0.9em;">${song.artist} • <span style="background: var(--beige); padding: 2px 8px; border-radius: 12px; font-size: 0.8em;">${song.genre}</span></div>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button onclick="addToFavorites('${song.title}', '${song.artist}')" style="background: var(--beige); color: var(--charcoal); border: none; padding: 6px 12px; border-radius: 16px; cursor: pointer; font-size: 0.8em; transition: background 0.2s;" onmouseover="this.style.background='var(--brown)'; this.style.color='white'" onmouseout="this.style.background='var(--beige)'; this.style.color='var(--charcoal)'">♡ Like</button>
+                                <button onclick="playSong('${song.title}', '${song.artist}')" style="background: var(--merlot); color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.9em; transition: background 0.2s;" onmouseover="this.style.background='var(--charcoal)'" onmouseout="this.style.background='var(--merlot)'">▶ Play</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="margin-top: 24px; text-align: center; border-top: 2px solid var(--beige); padding-top: 16px;">
+                    <button onclick="searchSimilarMoods('${category}')" style="background: var(--beige); color: var(--charcoal); border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-size: 0.9em; margin-right: 12px; transition: background 0.2s;" onmouseover="this.style.background='var(--brown)'; this.style.color='white'" onmouseout="this.style.background='var(--beige)'; this.style.color='var(--charcoal)'">Find Similar</button>
+                    <button onclick="closeSearchResults()" style="background: var(--charcoal); color: white; border: none; padding: 12px 24px; border-radius: 24px; cursor: pointer; font-size: 1em; transition: background 0.2s;" onmouseover="this.style.background='var(--merlot)'" onmouseout="this.style.background='var(--charcoal)'">Close</button>
+                </div>
+            `;
+
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+
+            // Close modal when clicking outside
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeSearchResults();
+                }
+            });
+        }
+
+        function closeSearchResults() {
+            const modal = document.getElementById('searchResultsModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function playSong(title, artist) {
+            alert(`Now playing: ${title} by ${artist}`);
+            // Here you would integrate with an actual music player
+            closeSearchResults();
+        }
+
+        function addToFavorites(title, artist) {
+            // Add to favorites functionality
+            let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+            const song = { title, artist, dateAdded: new Date().toISOString() };
+            
+            if (!favorites.find(fav => fav.title === title && fav.artist === artist)) {
+                favorites.push(song);
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+                alert(`Added "${title}" by ${artist} to favorites!`);
+            } else {
+                alert('This song is already in your favorites!');
+            }
+        }
+
+        function searchSimilarMoods(category) {
+            const allSongs = songDatabase[category] || [];
+            showSearchResults(`All ${category} songs`, allSongs, category);
+        }
+
+        function removeMood(index) {
+            recentMoods.splice(index, 1);
+            localStorage.setItem('recentMoods', JSON.stringify(recentMoods));
+            loadRecentMoods();
+        }
+        
+        function clearAllRecentMoods() {
+            if (confirm('Are you sure you want to clear all recent moods?')) {
+                recentMoods = [];
+                localStorage.setItem('recentMoods', JSON.stringify(recentMoods));
+                loadRecentMoods();
+            }
+        }
+
+        // Load recent moods on page load
+        window.addEventListener('load', loadRecentMoods);
+    </script>
+</body>
+</html>
